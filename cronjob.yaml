@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: time
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 30
+      template:
+        spec:
+          containers:
+          - name: time
+            image: nginx:1.22.1-alpine
+            imagePullPolicy: IfNotPresent
+            args:
+            - /bin/sh
+            - -c
+            - date; echo Hello there!
+          restartPolicy: OnFailure
+      parallelism: 1
+      completions: 1
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: 4
+  failedJobsHistoryLimit: 3
